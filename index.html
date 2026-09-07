@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>정선 인형뽑기 - JEONGSEON PLUSH GAME</title>
+  <meta name="description" content="정선 명물 인형을 뽑아 투명 가방을 채우고 장터에 팔아 부자가 되는 고퀄리티 2.5D 피직스 인형뽑기 게임!">
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+  <!-- Header & Neon Signboard -->
+  <header class="game-header">
+    <div class="neon-title-banner">
+      <h1>정선 인형뽑기</h1>
+      <span class="neon-subtitle">JEONGSEON PLUSH GAME</span>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar-container">
+      <div class="stat-pills-group">
+        <div class="stat-pill">
+          <span class="stat-icon">💰</span>
+          <div>
+            <div class="stat-label">보유 자본</div>
+            <div class="stat-value gold" id="moneyDisplay">₩5,000</div>
+          </div>
+        </div>
+
+        <div class="stat-pill">
+          <span class="stat-icon">🏆</span>
+          <div>
+            <div class="stat-label">누적 수익</div>
+            <div class="stat-value" id="careerEarningsDisplay">₩0</div>
+          </div>
+        </div>
+
+        <div class="stat-pill">
+          <span class="stat-icon">🎒</span>
+          <div>
+            <div class="stat-label">투명 가방</div>
+            <div class="stat-value highlight" id="bagCountDisplay">0 / 6</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quick-tools">
+        <button class="btn-tool" id="btnSoundToggle" title="배경음악 & 효과음 토글">🔊 사운드 ON</button>
+      </div>
+    </div>
+
+    <!-- Machine Selector Tabs: 1000 / 2500 / 5000 -->
+    <div class="machine-tabs-wrapper">
+      <button class="machine-tab-btn active" data-index="0">
+        🥔 제1관: 정선 5일장 머신 (₩1,000)
+      </button>
+      <button class="machine-tab-btn locked" data-index="1">
+        🌾 제2관: 민둥산 자연 머신 (₩2,500)
+      </button>
+      <button class="machine-tab-btn locked" data-index="2">
+        👑 제3관: 하이원 골드 잭팟 (₩5,000)
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Game Arena -->
+  <main class="game-main-arena">
+    <!-- Left / Center: Arcade Claw Cabinet -->
+    <section class="cabinet-wrapper">
+      <div class="cabinet-top-marquee">
+        <div class="marquee-title" id="machineNameDisplay">제1관: 정선 5일장 머신</div>
+        <div class="marquee-cost" id="machineCostDisplay">₩1,000 / 회</div>
+      </div>
+
+      <!-- 2.5D Claw Canvas Viewport -->
+      <div class="canvas-container">
+        <canvas id="clawCanvas" width="640" height="520"></canvas>
+      </div>
+
+      <!-- Arcade Bottom Controller Deck -->
+      <div class="arcade-control-deck">
+        <!-- 4-Way Virtual Joystick / Arrow Pad -->
+        <div class="joystick-pad">
+          <button class="joy-btn up" id="btnJoyUp" title="위 / 전진 (W / ↑)">▲</button>
+          <button class="joy-btn left" id="btnJoyLeft" title="왼쪽 (A / ←)">◀</button>
+          <div class="joy-btn center">XY</div>
+          <button class="joy-btn right" id="btnJoyRight" title="오른쪽 (D / →)">▶</button>
+          <button class="joy-btn down" id="btnJoyDown" title="아래 / 후진 (S / ↓)">▼</button>
+        </div>
+
+        <!-- Action Buttons: Insert Coin & Drop & Magnet Skill -->
+        <div class="actions-group">
+          <button class="btn-big-action btn-insert-coin" id="btnInsertCoin">
+            <span>🪙 동전 넣기</span>
+            <span class="btn-sub">[ C 키 / 1번 ]</span>
+          </button>
+
+          <button class="btn-big-action btn-drop-claw" id="btnDrop">
+            <span>집게 내리기! 🎯</span>
+            <span class="btn-sub">[ SPACE BAR ]</span>
+          </button>
+
+          <button class="btn-big-action btn-magnet-skill" id="btnMagnet" style="display:none;">
+            <span>자석 펄스 🧲</span>
+            <span class="btn-sub">[ Q 키 ]</span>
+          </button>
+        </div>
+
+        <!-- Keyboard Guide Hints -->
+        <div class="keyboard-hints">
+          <div><span class="kbd-badge">C</span> or <span class="kbd-badge">1</span> : 동전 투입 (자본 차감)</div>
+          <div><span class="kbd-badge">방향키</span> / <span class="kbd-badge">WASD</span> : 집게 이동 (X, Y)</div>
+          <div><span class="kbd-badge">SPACE</span> : 집게 하강 & 인형 잡기 (Z)</div>
+          <div><span class="kbd-badge">B</span> : 가방 & 장터 | <span class="kbd-badge">U</span> : 강화 연구소</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Sidebar: Character & Transparent Bag Hub -->
+    <aside class="sidebar-hub">
+      <div class="character-card">
+        <!-- Reactive Speech Bubble -->
+        <div class="speech-bubble-wrapper">
+          <div class="speech-bubble" id="speechBubble">
+            정선 인형뽑기장에 온 걸 환영해! 동전을 넣고 인형을 뽑아 투명 가방을 채워보자!
+          </div>
+        </div>
+
+        <!-- Character Concept Portrait -->
+        <div class="character-art-frame">
+          <img src="./Gemini_Generated_Image_g3s75jg3s75jg3s7 (1).png" alt="정선 인형뽑기 소녀와 투명 가방">
+        </div>
+
+        <!-- Realtime Transparent Backpack Canvas -->
+        <div class="transparent-bag-box">
+          <div class="bag-box-header">
+            <div class="bag-box-title">🎒 나의 투명 가방 (실시간)</div>
+            <div class="bag-box-count">터치하여 판매</div>
+          </div>
+          <canvas id="bagCanvas" width="320" height="170"></canvas>
+        </div>
+
+        <!-- Quick Sidebar Actions -->
+        <div class="sidebar-actions-grid">
+          <button class="btn-sidebar-action" id="btnOpenBag">
+            <span>🛍️ 가방 & 장터 판매</span>
+            <span class="kbd-badge">[ B ]</span>
+          </button>
+          <button class="btn-sidebar-action" id="btnOpenUpgrade">
+            <span>⚡ 뽑기 강화 연구소</span>
+            <span class="kbd-badge">[ U ]</span>
+          </button>
+          <button class="btn-sidebar-action" id="btnOpenCatalog">
+            <span>📖 정선 인형 도감</span>
+          </button>
+          <button class="btn-sidebar-action sell-all" id="btnSellAll">
+            <span>💸 원클릭 가방 일괄 판매 (+15% 보너스)</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Bag & Market Modal -->
+  <div class="modal-overlay" id="bagModal">
+    <div class="modal-window">
+      <div class="modal-header">
+        <div class="modal-title">🎒 투명 가방 & 정선 장터 판매</div>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body" id="bagItemList">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Upgrade Modal -->
+  <div class="modal-overlay" id="upgradeModal">
+    <div class="modal-window">
+      <div class="modal-header">
+        <div class="modal-title">⚡ 뽑기 기계 강화 연구소</div>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body" id="upgradeList">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Catalog Modal -->
+  <div class="modal-overlay" id="catalogModal">
+    <div class="modal-window">
+      <div class="modal-header">
+        <div class="modal-title">📖 정선 인형 도감 (Plushie Catalog)</div>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body" id="catalogList">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="game-toast" id="gameToast"></div>
+
+  <!-- Standalone Game Script -->
+  <script src="./js/game.js"></script>
+</body>
+</html>
