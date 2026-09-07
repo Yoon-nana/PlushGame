@@ -1,7 +1,6 @@
 // ============================================================================
 // Jeongseon Plush Game (정선 인형뽑기) - Full Standalone Engine
-// Depth-Synchronized Laser-Targeted Claw Kinematics
-// Economy Balance: 1000 / 2500 / 5000 KRW
+// Depth-Synchronized Laser Claw + Live Market Stock Price Fluctuation!
 // ============================================================================
 
 function safeRoundRect(ctx, x, y, width, height, radius = 8) {
@@ -32,7 +31,7 @@ function getFloorScreenY(cabinetY) {
   return 140 + (cabinetY - 50) * 0.93;
 }
 
-// --- 1. Plushies & Rarity Database (Scaled for 1,000 / 2,500 / 5,000) ---
+// --- 1. Plushies & Rarity Database ---
 const RARITY = {
   COMMON: { name: '일반', color: '#4ade80', bg: 'rgba(74, 222, 128, 0.2)', border: '#22c55e' },
   UNCOMMON: { name: '고급', color: '#60a5fa', bg: 'rgba(96, 165, 250, 0.2)', border: '#3b82f6' },
@@ -48,7 +47,7 @@ const PLUSHIE_DATABASE = {
     subname: '포슬포슬 감자 인형',
     emoji: '🥔',
     rarity: 'COMMON',
-    basePrice: 3500, // 1회 1,000원 대비 3.5배 수익!
+    basePrice: 3500,
     weight: 1.0,
     radius: 28,
     bgColor: '#fef08a',
@@ -61,7 +60,7 @@ const PLUSHIE_DATABASE = {
     subname: '쫀득쫀득 옥수수 인형',
     emoji: '🌽',
     rarity: 'COMMON',
-    basePrice: 4800, // 4.8배 수익!
+    basePrice: 4800,
     weight: 1.1,
     radius: 30,
     bgColor: '#fef9c3',
@@ -161,7 +160,6 @@ const PLUSHIE_DATABASE = {
   }
 };
 
-// 1,000 / 2,500 / 5,000 KRW Tier Configurations
 const CLAW_MACHINES = [
   {
     id: 'market',
@@ -434,17 +432,17 @@ class SoundManager {
     this.unlock();
     if (!this.ctx) return;
     const t = this.ctx.currentTime;
-    [1567.98, 2093.00].forEach((freq, i) => {
+    [1567.98, 2093.00, 2637.02].forEach((freq, i) => {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, t + i * 0.09);
-      gain.gain.setValueAtTime(0.4 * this.sfxVolume, t + i * 0.09);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.09 + 0.6);
+      osc.frequency.setValueAtTime(freq, t + i * 0.08);
+      gain.gain.setValueAtTime(0.4 * this.sfxVolume, t + i * 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.08 + 0.6);
       osc.connect(gain);
       gain.connect(this.ctx.destination);
-      osc.start(t + i * 0.09);
-      osc.stop(t + i * 0.09 + 0.65);
+      osc.start(t + i * 0.08);
+      osc.stop(t + i * 0.08 + 0.65);
     });
   }
 
@@ -599,7 +597,6 @@ class ClawEngine {
       emoji: template.emoji,
       rarity: template.rarity,
       basePrice: template.basePrice,
-      price: Math.round(template.basePrice * (isShiny ? 1.5 : 1)),
       weight: template.weight,
       radius: template.radius,
       bgColor: template.bgColor,
@@ -968,10 +965,6 @@ class ClawEngine {
     const chuteScreenY = getFloorScreenY(this.bounds.chute.y);
     this.createConfetti(this.bounds.chute.x, chuteScreenY, 45);
 
-    const priceText = `+₩${plushie.price.toLocaleString()}`;
-    this.addFloatingText(`🎉 ${plushie.name} 획득!`, this.bounds.chute.x, chuteScreenY - 70, '#facc15', 24);
-    this.addFloatingText(priceText, this.bounds.chute.x, chuteScreenY - 35, '#4ade80', 22);
-
     if (this.onCatch) {
       this.onCatch(plushie);
     }
@@ -1320,7 +1313,7 @@ class ClawEngine {
   }
 }
 
-// --- 4. Main Game Logic Class ---
+// --- 4. Main Game Logic Class with Live Market Rates ---
 class JeongseonPlushGame {
   constructor() {
     this.canvas = document.getElementById('clawCanvas');
@@ -1335,6 +1328,21 @@ class JeongseonPlushGame {
     this.bagCapacity = 6;
     this.currentMachineIndex = 0;
 
+    // Live Market Rates & Trend Multipliers
+    this.marketRates = {
+      potato: 1.0,
+      corn: 1.0,
+      apple: 1.0,
+      squirrel: 1.0,
+      mountain: 1.0,
+      otter: 1.0,
+      trout: 1.0,
+      piggy: 1.0,
+      goldbar: 1.0
+    };
+    this.marketNews = "정선 5일장 개장! 인형 시세가 활발하게 변동 중입니다!";
+    this.marketTimer = 15; // changes every 15s
+
     this.upgrades = {
       gripPower: 1,
       moveSpeed: 1,
@@ -1343,7 +1351,6 @@ class JeongseonPlushGame {
       magnetSkill: false
     };
 
-    // Scaled Upgrade Costs
     this.upgradeCosts = {
       gripPower: [0, 5000, 15000, 40000, 100000],
       moveSpeed: [0, 3000, 10000, 25000, 60000],
@@ -1357,8 +1364,9 @@ class JeongseonPlushGame {
     this.quotes = {
       start: "정선 인형뽑기장에 온 걸 환영해! 동전을 넣고 인형을 뽑아 투명 가방을 채워보자!",
       coin: ["동전 투입 완료! 30초 안에 방향키로 조준하고 Spacebar를 눌러봐! 🎯", "딸깍! 코인이 들어갔어! 집중해서 인형을 노려보자!"],
-      catch: ["우와 잡았다!! 투명 가방에 쏙 들어갔어! ✨", "대박! 이걸 뽑다니 손맛 최고다! 💖", "야호! 장터에 비싸게 팔아서 돈을 벌자!"],
+      catch: ["우와 잡았다!! 투명 가방에 쏙 들어갔어! ✨", "대박! 이걸 뽑다니 손맛 최고다! 💖", "야호! 장터 시세 잘 보고 비쌀 때 팔아야 해!"],
       miss: ["으앙 아깝다.. 거의 다 건졌는데! 💦", "집게를 더 강화하면 안 놓칠 텐데..", "괜찮아! 다음엔 꼭 뽑을 수 있어!"],
+      sellPeak: ["대애박!! 시세 떡상할 때 팔아서 떼돈 벌었어!! 🚀💰", "와! 초고가 타이밍에 제대로 팔았다! 🥳✨"],
       sell: ["장터에서 돈을 잔뜩 벌었어! 💰", "투명 가방이 가벼워진 대신 지갑이 빵빵해졌다!", "우와아 부자가 되어가는 중이야!"],
       broke: ["앗, 돈이 부족해! 가방에 있는 인형을 장터에 팔아서 돈을 마련하자!"]
     };
@@ -1368,6 +1376,7 @@ class JeongseonPlushGame {
 
   init() {
     this.loadSave();
+    this.randomizeMarketRates(false);
 
     this.engine = new ClawEngine(
       this.canvas,
@@ -1391,6 +1400,16 @@ class JeongseonPlushGame {
     window.addEventListener('keydown', unlockAudioOnce);
     window.addEventListener('touchstart', unlockAudioOnce);
 
+    // Market Ticker Interval (15 seconds)
+    setInterval(() => {
+      this.marketTimer--;
+      if (this.marketTimer <= 0) {
+        this.marketTimer = 15;
+        this.randomizeMarketRates(true);
+      }
+      this.updateMarketTimerDisplay();
+    }, 1000);
+
     let lastTime = performance.now();
     const loop = (time) => {
       const delta = Math.min((time - lastTime) / 16.666, 2.0);
@@ -1403,6 +1422,58 @@ class JeongseonPlushGame {
       requestAnimationFrame(loop);
     };
     requestAnimationFrame(loop);
+  }
+
+  // --- Dynamic Real-time Market Fluctuation System ---
+  randomizeMarketRates(notify = true) {
+    const newsList = [
+      { id: 'potato', msg: '🥔 정선 감자 축제 개막! 알감자 시세 폭등 중! 🚀', surge: 1.85 },
+      { id: 'corn', msg: '🌽 옥수수 농가 직거래 인기! 찰옥수수 시세 급상승! 📈', surge: 1.70 },
+      { id: 'apple', msg: '🍎 빨간 모자 소녀 꿀사과 인기 폭발! 사과 시세 떡상! 🚀', surge: 1.90 },
+      { id: 'squirrel', msg: '🐿️ 가리왕산 다람쥐 인형 품귀 현상! 가격 치솟는 중!', surge: 1.75 },
+      { id: 'mountain', msg: '⛰️ 민둥산 은빛 억새 관광객 급증! 억새요정 프리미엄!', surge: 1.80 },
+      { id: 'otter', msg: '🦦 동강 1급수 수달 굿즈 대란! 수달 시세 로켓 상승!', surge: 1.85 },
+      { id: 'trout', msg: '🐟 오장폭포 황금 송어 잭팟! 송어 시세 대폭발 👑', surge: 2.10 },
+      { id: 'piggy', msg: '🐷 대박 복돼지 행운 열풍! 복돼지 잭팟 초고가 돌파 💰', surge: 2.20 },
+      { id: 'goldbar', msg: '💰 하이원 금값 폭등! 골드바 사상 최고가 경신!', surge: 2.30 }
+    ];
+
+    const chosenNews = newsList[Math.floor(Math.random() * newsList.length)];
+    this.marketNews = chosenNews.msg;
+
+    Object.keys(PLUSHIE_DATABASE).forEach(id => {
+      if (id === chosenNews.id) {
+        this.marketRates[id] = chosenNews.surge;
+      } else {
+        // Random fluctuation between -30% (0.7) and +60% (1.6)
+        const rand = 0.70 + Math.random() * 0.90;
+        this.marketRates[id] = Math.round(rand * 100) / 100;
+      }
+    });
+
+    const newsEl = document.getElementById('marketTickerText');
+    if (newsEl) {
+      newsEl.textContent = this.marketNews;
+    }
+
+    if (notify) {
+      this.showToast(`📢 [시세 변동] ${this.marketNews}`);
+      this.renderBagModalList();
+    }
+  }
+
+  updateMarketTimerDisplay() {
+    const timerEl = document.getElementById('marketTimerDisplay');
+    if (timerEl) {
+      timerEl.textContent = `⏳ 시세 변동: ${this.marketTimer}초`;
+    }
+  }
+
+  getCurrentPlushiePrice(plushie) {
+    const template = PLUSHIE_DATABASE[plushie.id] || PLUSHIE_DATABASE.potato;
+    const rate = this.marketRates[plushie.id] || 1.0;
+    const shinyMult = plushie.isShiny ? 1.5 : 1.0;
+    return Math.round(template.basePrice * rate * shinyMult);
   }
 
   updateEngineParams() {
@@ -1570,9 +1641,15 @@ class JeongseonPlushGame {
       catchTime: Date.now()
     });
 
+    const currentVal = this.getCurrentPlushiePrice(plushie);
+    const chuteScreenY = getFloorScreenY(this.engine.bounds.chute.y);
+
+    this.engine.addFloatingText(`🎉 ${plushie.name} 획득!`, this.engine.bounds.chute.x, chuteScreenY - 70, '#facc15', 24);
+    this.engine.addFloatingText(`현재 시세: ₩${currentVal.toLocaleString()}`, this.engine.bounds.chute.x, chuteScreenY - 35, '#4ade80', 22);
+
     const quote = this.quotes.catch[Math.floor(Math.random() * this.quotes.catch.length)];
     this.setCharacterSpeech(`🎉 ${plushie.name} 획득! ${quote}`);
-    this.showToast(`✨ [${RARITY[plushie.rarity].name}] ${plushie.name} 획득! (+₩${plushie.price.toLocaleString()})`);
+    this.showToast(`✨ [${RARITY[plushie.rarity].name}] ${plushie.name} 획득! (현재 시세: ₩${currentVal.toLocaleString()})`);
 
     this.renderHUD();
     this.saveGame();
@@ -1613,7 +1690,8 @@ class JeongseonPlushGame {
   sellPlushie(index) {
     if (index < 0 || index >= this.bag.length) return;
     const p = this.bag[index];
-    const earned = p.price;
+    const earned = this.getCurrentPlushiePrice(p);
+    const rate = this.marketRates[p.id] || 1.0;
 
     this.money += earned;
     this.careerEarnings += earned;
@@ -1622,8 +1700,13 @@ class JeongseonPlushGame {
     soundManager.playChaChing();
     this.showToast(`💵 ${p.name} 판매 완료! +₩${earned.toLocaleString()}`);
 
-    const quote = this.quotes.sell[Math.floor(Math.random() * this.quotes.sell.length)];
-    this.setCharacterSpeech(quote);
+    if (rate >= 1.5) {
+      const peakQuote = this.quotes.sellPeak[Math.floor(Math.random() * this.quotes.sellPeak.length)];
+      this.setCharacterSpeech(peakQuote);
+    } else {
+      const quote = this.quotes.sell[Math.floor(Math.random() * this.quotes.sell.length)];
+      this.setCharacterSpeech(quote);
+    }
 
     this.renderAll();
     this.renderBagModalList();
@@ -1640,7 +1723,7 @@ class JeongseonPlushGame {
     const bulkBonusRate = this.bag.length >= 5 ? 1.15 : 1.0;
 
     for (const p of this.bag) {
-      totalEarned += p.price;
+      totalEarned += this.getCurrentPlushiePrice(p);
     }
     const finalEarned = Math.round(totalEarned * bulkBonusRate);
     const count = this.bag.length;
@@ -1652,7 +1735,7 @@ class JeongseonPlushGame {
     soundManager.playChaChing();
     this.showToast(`💰 인형 ${count}개 일괄 판매 완료! +₩${finalEarned.toLocaleString()} ${bulkBonusRate > 1.0 ? '(대량 보너스 +15%!)' : ''}`);
 
-    this.setCharacterSpeech(`대박! 인형 ${count}개를 팔아서 ₩${finalEarned.toLocaleString()}을 벌었어! 🥳💸`);
+    this.setCharacterSpeech(`대박! 인형 ${count}개를 장터 시세로 팔아서 ₩${finalEarned.toLocaleString()}을 벌었어! 🥳💸`);
 
     this.renderAll();
     this.renderBagModalList();
@@ -1874,6 +1957,19 @@ class JeongseonPlushGame {
 
     this.bag.forEach((p, idx) => {
       const rarityInfo = RARITY[p.rarity];
+      const currentPrice = this.getCurrentPlushiePrice(p);
+      const rate = this.marketRates[p.id] || 1.0;
+      const diffPercent = Math.round((rate - 1.0) * 100);
+
+      let trendBadge = '';
+      if (diffPercent > 0) {
+        trendBadge = `<span class="trend-badge surge">▲ +${diffPercent}% (폭등!)</span>`;
+      } else if (diffPercent < 0) {
+        trendBadge = `<span class="trend-badge drop">▼ ${diffPercent}% (하락)</span>`;
+      } else {
+        trendBadge = `<span class="trend-badge steady">➖ 0% (보합)</span>`;
+      }
+
       const itemEl = document.createElement('div');
       itemEl.className = 'bag-item-card';
       itemEl.innerHTML = `
@@ -1886,9 +1982,13 @@ class JeongseonPlushGame {
             <span class="rarity-badge" style="background:${rarityInfo.bg}; color:${rarityInfo.color}; border:1px solid ${rarityInfo.border}">
               ${rarityInfo.name}
             </span>
+            ${trendBadge}
           </div>
           <div class="item-desc">${p.subname}</div>
-          <div class="item-price">판매가: <b>₩${p.price.toLocaleString()}</b></div>
+          <div class="item-price">
+            실시간 시세: <b class="price-val">₩${currentPrice.toLocaleString()}</b>
+            <span class="base-price-hint">(기본 ₩${p.basePrice.toLocaleString()})</span>
+          </div>
         </div>
         <button class="btn-sell-single" data-index="${idx}">판매 💰</button>
       `;
@@ -1996,6 +2096,10 @@ class JeongseonPlushGame {
 
     Object.values(PLUSHIE_DATABASE).forEach(p => {
       const rarityInfo = RARITY[p.rarity];
+      const rate = this.marketRates[p.id] || 1.0;
+      const curPrice = Math.round(p.basePrice * rate);
+      const diffPercent = Math.round((rate - 1.0) * 100);
+
       const card = document.createElement('div');
       card.className = 'catalog-card';
       card.innerHTML = `
@@ -2010,7 +2114,10 @@ class JeongseonPlushGame {
             </span>
           </div>
           <div class="catalog-desc">${p.desc}</div>
-          <div class="catalog-val">기본 가치: <b>₩${p.basePrice.toLocaleString()}</b> | 무게: ${p.weight}kg</div>
+          <div class="catalog-val">
+            기준가: ₩${p.basePrice.toLocaleString()} | 
+            <span style="color:${diffPercent >= 0 ? '#f43f5e' : '#38bdf8'}; font-weight:bold;">현재 시세: ₩${curPrice.toLocaleString()} (${diffPercent >= 0 ? '+' : ''}${diffPercent}%)</span>
+          </div>
         </div>
       `;
 

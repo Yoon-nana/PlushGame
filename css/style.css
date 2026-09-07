@@ -161,6 +161,64 @@ body {
   transform: translateY(-2px);
 }
 
+/* Market Ticker Banner */
+.market-ticker-banner {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg, rgba(30, 27, 75, 0.9), rgba(88, 28, 135, 0.9), rgba(30, 27, 75, 0.9));
+  border: 1.5px solid rgba(236, 72, 153, 0.4);
+  border-radius: 14px;
+  padding: 8px 18px;
+  box-shadow: 0 4px 20px rgba(168, 85, 247, 0.25);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ticker-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 260px;
+}
+
+.ticker-badge {
+  font-size: 0.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ec4899, #a855f7);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 8px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.ticker-text {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #fef08a;
+  text-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
+  animation: pulseTicker 2.5s infinite;
+}
+
+@keyframes pulseTicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+
+.ticker-timer {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #38bdf8;
+  background: rgba(14, 165, 233, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 4px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
 /* Machine Selector Tabs */
 .machine-tabs-wrapper {
   width: 100%;
@@ -745,15 +803,61 @@ body {
   border-radius: 6px;
 }
 
+.trend-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 6px;
+  letter-spacing: 0.3px;
+}
+
+.trend-badge.surge {
+  background: rgba(244, 63, 94, 0.2);
+  border: 1px solid #f43f5e;
+  color: #fda4af;
+  animation: pulseSurge 1.5s infinite;
+}
+
+@keyframes pulseSurge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.trend-badge.drop {
+  background: rgba(14, 165, 233, 0.2);
+  border: 1px solid #0284c7;
+  color: #7dd3fc;
+}
+
+.trend-badge.steady {
+  background: rgba(148, 163, 184, 0.2);
+  border: 1px solid #64748b;
+  color: #cbd5e1;
+}
+
 .item-desc {
   font-size: 0.8rem;
   color: var(--text-muted);
 }
 
 .item-price {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
+  color: #94a3b8;
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.price-val {
   color: #4ade80;
-  margin-top: 2px;
+  font-size: 0.98rem;
+}
+
+.base-price-hint {
+  font-size: 0.75rem;
+  color: #64748b;
 }
 
 .btn-sell-single {
