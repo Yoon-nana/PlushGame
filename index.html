@@ -41,6 +41,14 @@
             <div class="stat-value highlight" id="bagCountDisplay">0 / 6</div>
           </div>
         </div>
+
+        <div class="stat-pill" title="정선 부동산 매입 시 실시간 임대료가 자동 적립됩니다!">
+          <span class="stat-icon">🏢</span>
+          <div>
+            <div class="stat-label">부동산 임대료</div>
+            <div class="stat-value purple" id="passiveIncomeDisplay">+₩0/초</div>
+          </div>
+        </div>
       </div>
 
       <div class="quick-tools">
@@ -116,10 +124,8 @@
 
         <!-- Keyboard Guide Hints -->
         <div class="keyboard-hints">
-          <div><span class="kbd-badge">C</span> or <span class="kbd-badge">1</span> : 동전 투입 (자본 차감)</div>
-          <div><span class="kbd-badge">방향키</span> / <span class="kbd-badge">WASD</span> : 집게 이동 (X, Y)</div>
-          <div><span class="kbd-badge">SPACE</span> : 집게 하강 & 인형 잡기 (Z)</div>
-          <div><span class="kbd-badge">B</span> : 가방 & 장터 | <span class="kbd-badge">U</span> : 강화 연구소</div>
+          <div><span class="kbd-badge">C</span> or <span class="kbd-badge">1</span> : 동전 투입 | <span class="kbd-badge">방향키</span>/<span class="kbd-badge">WASD</span> : 이동</div>
+          <div><span class="kbd-badge">SPACE</span> : 집게 하강 | <span class="kbd-badge">B</span> : 가방 | <span class="kbd-badge">H</span> : 부동산 | <span class="kbd-badge">T</span> : 칭호</div>
         </div>
       </div>
     </section>
@@ -127,6 +133,14 @@
     <!-- Right Sidebar: Character & Transparent Bag Hub -->
     <aside class="sidebar-hub">
       <div class="character-card">
+        <!-- Active Equipped Title Badge -->
+        <div class="character-title-holder">
+          <div class="active-title-pill" id="activeTitleDisplay" title="클릭하여 칭호 & 명예의 전당 열기 [T]">
+            <span class="title-sparkle">✨</span>
+            <span id="activeTitleText">🐣 [칭호] 정선 햇병아리</span>
+          </div>
+        </div>
+
         <!-- Reactive Speech Bubble -->
         <div class="speech-bubble-wrapper">
           <div class="speech-bubble" id="speechBubble">
@@ -154,6 +168,14 @@
             <span>🛍️ 가방 & 장터 판매</span>
             <span class="kbd-badge">[ B ]</span>
           </button>
+          <button class="btn-sidebar-action real-estate-btn" id="btnOpenRealEstate">
+            <span>🏢 정선 부동산 & 건물 매입</span>
+            <span class="kbd-badge">[ H ]</span>
+          </button>
+          <button class="btn-sidebar-action titles-btn" id="btnOpenTitles">
+            <span>🎖️ 명예의 전당 & 칭호</span>
+            <span class="kbd-badge">[ T ]</span>
+          </button>
           <button class="btn-sidebar-action" id="btnOpenUpgrade">
             <span>⚡ 뽑기 강화 연구소</span>
             <span class="kbd-badge">[ U ]</span>
@@ -177,6 +199,38 @@
         <button class="modal-close-btn">&times;</button>
       </div>
       <div class="modal-body" id="bagItemList">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Real Estate & Properties Modal -->
+  <div class="modal-overlay" id="realEstateModal">
+    <div class="modal-window">
+      <div class="modal-header">
+        <div class="modal-title">🏢 정선 부동산 & 랜드마크 매입</div>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-header-summary" id="realEstateSummary">
+        <!-- Injected via JS -->
+      </div>
+      <div class="modal-body" id="realEstateList">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Titles & Achievements Modal -->
+  <div class="modal-overlay" id="titleModal">
+    <div class="modal-window">
+      <div class="modal-header">
+        <div class="modal-title">🎖️ 명예의 전당 & 칭호 (Titles)</div>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-header-summary" id="titleSummary">
+        <!-- Injected via JS -->
+      </div>
+      <div class="modal-body" id="titleList">
         <!-- Injected via JS -->
       </div>
     </div>

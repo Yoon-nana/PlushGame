@@ -209,6 +209,168 @@ const CLAW_MACHINES = [
   }
 ];
 
+// --- 3. Real Estate & Landmark Properties Database ---
+const REAL_ESTATE_PROPERTIES = [
+  {
+    id: 'tent',
+    name: '동강변 힐링 글램핑 텐트',
+    icon: '⛺',
+    cost: 50000,
+    incomePerSec: 25,
+    desc: '맑은 동강 바람을 쐬며 힐링하는 캠핑 텐트. 관광객들의 대여료가 들어옵니다.'
+  },
+  {
+    id: 'foodcart',
+    name: '정선 5일장 명물 노점상',
+    icon: '🍲',
+    cost: 200000,
+    incomePerSec: 120,
+    desc: '수수부꾸미와 콧등치기 국수로 문전성시를 이루는 5일장의 알짜배기 노점입니다.'
+  },
+  {
+    id: 'pension',
+    name: '아우라지 강변 독채 펜션',
+    icon: '🏡',
+    cost: 800000,
+    incomePerSec: 550,
+    desc: '아우라지 물길이 한눈에 보이는 유럽풍 독채 펜션. 주말마다 만실 행진!'
+  },
+  {
+    id: 'cafe',
+    name: '민둥산 은빛억새 스카이 카페',
+    icon: '☕',
+    cost: 3000000,
+    incomePerSec: 2400,
+    desc: '민둥산 정상에서 억새밭을 보며 감자빵과 커피를 파는 정선의 핫플레이스 카페입니다.'
+  },
+  {
+    id: 'arcade_building',
+    name: '정선 아리랑 쇼핑타운 빌딩',
+    icon: '🏢',
+    cost: 12000000,
+    incomePerSec: 11000,
+    desc: '대형 인형뽑기 아케이드장과 쇼핑몰이 입점한 번화가 5층 랜드마크 빌딩입니다.'
+  },
+  {
+    id: 'resort_suite',
+    name: '하이원 잭팟 리조트 펜트하우스',
+    icon: '🏨',
+    cost: 50000000,
+    incomePerSec: 55000,
+    desc: '카지노와 스키장이 내려다보이는 초호화 스위트룸. VIP 임대 수익이 쏟아집니다.'
+  },
+  {
+    id: 'themepark',
+    name: '정선 인형뽑기 테마파크 왕국',
+    icon: '🏰',
+    cost: 200000000,
+    incomePerSec: 250000,
+    desc: '정선 전체를 대표하는 세계 최대 규모의 인형뽑기 테마파크 왕국! 정선의 지배자가 되었습니다.'
+  }
+];
+
+// --- 4. Titles & Achievements Database ---
+const TITLE_DEFINITIONS = [
+  {
+    id: 'newbie',
+    name: '정선 햇병아리',
+    icon: '🐣',
+    desc: '정선 인형뽑기 세계에 첫 발을 내디딘 꿈나무!',
+    buffDesc: '기본 칭호',
+    buffType: 'none',
+    buffValue: 0,
+    checkUnlocked: () => true
+  },
+  {
+    id: 'gold_crazy',
+    name: '황금에 미친자',
+    icon: '🥇',
+    desc: '순금 골드바를 3개 이상 뽑아 부의 절정에 다다른 자!',
+    buffDesc: '골드바 인형 판매가 +30% 추가 보너스!',
+    buffType: 'goldbar_bonus',
+    buffValue: 0.30,
+    checkUnlocked: (g) => (g.itemCatchStats?.goldbar || 0) >= 3,
+    progressText: (g) => `${g.itemCatchStats?.goldbar || 0} / 3개`
+  },
+  {
+    id: 'potato_king',
+    name: '감자 대마왕',
+    icon: '🥔',
+    desc: '정선 알감자를 10개 이상 싹쓸이한 감자 러버!',
+    buffDesc: '농산물(감자/옥수수/사과) 인형 판매가 +25%!',
+    buffType: 'farm_bonus',
+    buffValue: 0.25,
+    checkUnlocked: (g) => (g.itemCatchStats?.potato || 0) >= 10,
+    progressText: (g) => `${g.itemCatchStats?.potato || 0} / 10개`
+  },
+  {
+    id: 'god_hand',
+    name: '신의 손 집게장인',
+    icon: '🎯',
+    desc: '통산 인형 15개 이상 포획 성공한 집게 컨트롤러!',
+    buffDesc: '집게 기본 악력(Grip Strength) +20% 상승!',
+    buffType: 'grip_bonus',
+    buffValue: 0.20,
+    checkUnlocked: (g) => (g.totalCatches || 0) >= 15,
+    progressText: (g) => `${g.totalCatches || 0} / 15회`
+  },
+  {
+    id: 'market_speculator',
+    name: '장터 떡상 투기꾼',
+    icon: '📈',
+    desc: '시세 폭등(+50% 이상) 타이밍에 인형을 5회 이상 매도한 투자의 귀재!',
+    buffDesc: '모든 인형 장터 판매 시 상시 +10% 추가 보너스!',
+    buffType: 'all_sell_bonus',
+    buffValue: 0.10,
+    checkUnlocked: (g) => (g.peakSellCount || 0) >= 5,
+    progressText: (g) => `${g.peakSellCount || 0} / 5회`
+  },
+  {
+    id: 'highroller',
+    name: '하이원 잭팟의 제왕',
+    icon: '👑',
+    desc: '제3관의 전설급 인형(황금송어, 복돼지, 골드바)을 모두 1개 이상 수집!',
+    buffDesc: '반짝이는 황금/샤이니 인형 등장 확률 +12%!',
+    buffType: 'shiny_chance',
+    buffValue: 0.12,
+    checkUnlocked: (g) => (g.itemCatchStats?.trout || 0) >= 1 && (g.itemCatchStats?.piggy || 0) >= 1 && (g.itemCatchStats?.goldbar || 0) >= 1,
+    progressText: (g) => `송어:${g.itemCatchStats?.trout || 0} 돼지:${g.itemCatchStats?.piggy || 0} 금:${g.itemCatchStats?.goldbar || 0}`
+  },
+  {
+    id: 'landlord_king',
+    name: '정선 최대 건물주',
+    icon: '🏰',
+    desc: '정선 부동산 및 건물을 3채 이상 매입한 갓물주!',
+    buffDesc: '모든 부동산 초당 임대 수익 +30% 폭증!',
+    buffType: 'rent_bonus',
+    buffValue: 0.30,
+    checkUnlocked: (g) => Object.keys(g.properties || {}).length >= 3,
+    progressText: (g) => `${Object.keys(g.properties || {}).length} / 3채`
+  },
+  {
+    id: 'buffett',
+    name: '정선 워렌 버핏',
+    icon: '💸',
+    desc: '누적 수익 ₩1,000,000 이상을 달성한 자본주의의 신!',
+    buffDesc: '모든 머신 플레이 요금 -10% 할인 혜택!',
+    buffType: 'play_discount',
+    buffValue: 0.10,
+    checkUnlocked: (g) => (g.careerEarnings || 0) >= 1000000,
+    progressText: (g) => `₩${(g.careerEarnings || 0).toLocaleString()} / ₩1,000,000`
+  },
+  {
+    id: 'bag_burst',
+    name: '가방이 터진 자',
+    icon: '🎒',
+    desc: '투명 가방을 8개 이상의 인형으로 꽉 채운 수집광!',
+    buffDesc: '가방 원클릭 일괄 판매 보너스 +25% (기존 +15%→+25%)!',
+    buffType: 'bulk_sell_bonus',
+    buffValue: 0.25,
+    checkUnlocked: (g) => (g.maxBagEver || 0) >= 8 || (g.bag?.length || 0) >= 8,
+    progressText: (g) => `최대 수납 ${Math.max(g.maxBagEver || 0, g.bag?.length || 0)} / 8개`
+  }
+];
+
 function drawPlushieEmoji(ctx, p, x, y, size = 30, angle = 0, isShiny = false) {
   ctx.save();
   ctx.translate(x, y);
@@ -775,10 +937,10 @@ class ClawEngine {
           }
 
           if (bestTarget) {
-            const gripPowerBonus = 0.25 + (this.upgrades.gripPower * 0.20);
+            const gripPowerBonus = 0.25 + (this.upgrades.gripPower * 0.20) + (this.upgrades.titleGripBonus || 0);
             const weightPenalty = bestTarget.weight * 0.32;
             const alignmentBonus = Math.max(0, 1 - (bestDist / (bestTarget.radius + 24)));
-            const luckBonus = this.upgrades.luckCharm * 0.05;
+            const luckBonus = (this.upgrades.luckCharm * 0.05) + (this.upgrades.titleShinyBonus || 0);
 
             const gripQuality = (gripPowerBonus + alignmentBonus * 0.60 + luckBonus) - weightPenalty;
 
@@ -1313,7 +1475,7 @@ class ClawEngine {
   }
 }
 
-// --- 4. Main Game Logic Class with Live Market Rates ---
+// --- 5. Main Game Logic Class with Real Estate & Titles System ---
 class JeongseonPlushGame {
   constructor() {
     this.canvas = document.getElementById('clawCanvas');
@@ -1327,6 +1489,16 @@ class JeongseonPlushGame {
     this.bag = [];
     this.bagCapacity = 6;
     this.currentMachineIndex = 0;
+
+    // Real Estate & Properties Owned
+    this.properties = {}; // { tent: true, foodcart: true, ... }
+
+    // Statistics for Titles & Achievements
+    this.itemCatchStats = {}; // { potato: 0, goldbar: 0, ... }
+    this.peakSellCount = 0; // sales at +50% surge
+    this.unlockedTitles = ['newbie'];
+    this.activeTitle = 'newbie';
+    this.maxBagEver = 0;
 
     // Live Market Rates & Trend Multipliers
     this.marketRates = {
@@ -1377,6 +1549,8 @@ class JeongseonPlushGame {
   init() {
     this.loadSave();
     this.randomizeMarketRates(false);
+    this.checkTitleUnlocks(false);
+    this.updateActiveTitleUI();
 
     this.engine = new ClawEngine(
       this.canvas,
@@ -1400,14 +1574,24 @@ class JeongseonPlushGame {
     window.addEventListener('keydown', unlockAudioOnce);
     window.addEventListener('touchstart', unlockAudioOnce);
 
-    // Market Ticker Interval (15 seconds)
+    // 1-second interval loop (Market Rates + Passive Rent Income + Title Checks)
     setInterval(() => {
+      // 1. Market rate timer
       this.marketTimer--;
       if (this.marketTimer <= 0) {
         this.marketTimer = 15;
         this.randomizeMarketRates(true);
       }
       this.updateMarketTimerDisplay();
+
+      // 2. Real estate rent accumulation
+      const rent = this.getTotalPassiveIncomePerSec();
+      if (rent > 0) {
+        this.money += rent;
+        this.careerEarnings += rent;
+        this.checkTitleUnlocks(true);
+        this.renderHUD();
+      }
     }, 1000);
 
     let lastTime = performance.now();
@@ -1469,20 +1653,235 @@ class JeongseonPlushGame {
     }
   }
 
+  // --- Real Estate & Titles System ---
+  getTotalPassiveIncomePerSec() {
+    let total = 0;
+    REAL_ESTATE_PROPERTIES.forEach(prop => {
+      if (this.properties[prop.id]) {
+        total += prop.incomePerSec;
+      }
+    });
+    const rentBonus = this.getTitleBuff('rent_bonus');
+    return Math.round(total * (1 + rentBonus));
+  }
+
+  getTitleBuff(buffType) {
+    const activeDef = TITLE_DEFINITIONS.find(t => t.id === this.activeTitle);
+    if (activeDef && activeDef.buffType === buffType) {
+      return activeDef.buffValue || 0;
+    }
+    return 0;
+  }
+
+  checkTitleUnlocks(notify = true) {
+    let newlyUnlocked = false;
+    TITLE_DEFINITIONS.forEach(t => {
+      if (!this.unlockedTitles.includes(t.id)) {
+        if (t.checkUnlocked && t.checkUnlocked(this)) {
+          this.unlockedTitles.push(t.id);
+          newlyUnlocked = true;
+          if (notify) {
+            soundManager.playWinChime('EPIC');
+            this.showToast(`🎖️ [칭호 획득!] 새로운 칭호 [${t.name}] 해금!`);
+            this.setCharacterSpeech(`대박! 새로운 칭호 [${t.name}]을(를) 획득했어! 칭호창[T]에서 장착해봐! 👑`);
+          }
+        }
+      }
+    });
+    this.updateActiveTitleUI();
+    return newlyUnlocked;
+  }
+
+  updateActiveTitleUI() {
+    const activeDef = TITLE_DEFINITIONS.find(t => t.id === this.activeTitle) || TITLE_DEFINITIONS[0];
+    const textEl = document.getElementById('activeTitleText');
+    if (textEl) {
+      textEl.textContent = `${activeDef.icon} [칭호] ${activeDef.name}`;
+    }
+  }
+
+  openRealEstateModal() {
+    soundManager.playClick();
+    this.renderRealEstateModalList();
+    document.getElementById('realEstateModal').classList.add('active');
+  }
+
+  renderRealEstateModalList() {
+    const summaryEl = document.getElementById('realEstateSummary');
+    const listEl = document.getElementById('realEstateList');
+    if (!summaryEl || !listEl) return;
+
+    const ownedCount = Object.keys(this.properties).length;
+    const totalRent = this.getTotalPassiveIncomePerSec();
+    const minRent = totalRent * 60;
+
+    summaryEl.innerHTML = `
+      <div class="summary-stat-group">
+        <div class="summary-stat-item">소유 건물: <b class="gold">${ownedCount} / ${REAL_ESTATE_PROPERTIES.length}채</b></div>
+        <div class="summary-stat-item">초당 임대 수익: <b class="purple">+₩${totalRent.toLocaleString()}/초</b></div>
+        <div class="summary-stat-item">분당 예상 수입: <b class="gold">+₩${minRent.toLocaleString()}/분</b></div>
+      </div>
+    `;
+
+    listEl.innerHTML = '';
+    REAL_ESTATE_PROPERTIES.forEach(prop => {
+      const isOwned = !!this.properties[prop.id];
+      const canAfford = this.money >= prop.cost && !isOwned;
+
+      const card = document.createElement('div');
+      card.className = `real-estate-card ${isOwned ? 'owned' : ''}`;
+      card.innerHTML = `
+        <div class="real-estate-icon">${prop.icon}</div>
+        <div class="real-estate-info">
+          <div class="real-estate-name">${prop.name}</div>
+          <div class="real-estate-income">⚡ 실시간 임대 수익: +₩${prop.incomePerSec.toLocaleString()}/초</div>
+          <div class="real-estate-desc">${prop.desc}</div>
+        </div>
+        <button class="btn-buy-property ${isOwned ? 'owned' : (canAfford ? 'buy-ready' : 'disabled')}" data-id="${prop.id}" ${isOwned || !canAfford ? 'disabled' : ''}>
+          ${isOwned ? '보유 중 🏆' : `₩${prop.cost.toLocaleString()} 매입`}
+        </button>
+      `;
+
+      listEl.appendChild(card);
+      if (!isOwned && canAfford) {
+        card.querySelector('.btn-buy-property')?.addEventListener('click', () => {
+          this.buyProperty(prop.id);
+        });
+      }
+    });
+  }
+
+  buyProperty(propId) {
+    const prop = REAL_ESTATE_PROPERTIES.find(p => p.id === propId);
+    if (!prop || this.properties[propId]) return;
+
+    if (this.money < prop.cost) {
+      soundManager.playMiss();
+      this.showToast('자본이 부족하여 부동산을 매입할 수 없습니다!');
+      return;
+    }
+
+    this.money -= prop.cost;
+    this.properties[propId] = true;
+
+    soundManager.playWinChime('LEGENDARY');
+    this.showToast(`🏢 [부동산 매입!] ${prop.name} 소유주가 되었습니다! (+₩${prop.incomePerSec.toLocaleString()}/초)`);
+    this.setCharacterSpeech(`축하해!! 이제 [${prop.name}]의 건물주야! 가만히 있어도 돈이 술술 들어와! 🥳🏰`);
+
+    this.checkTitleUnlocks();
+    this.renderAll();
+    this.renderRealEstateModalList();
+    this.saveGame();
+  }
+
+  openTitleModal() {
+    soundManager.playClick();
+    this.checkTitleUnlocks(false);
+    this.renderTitleModalList();
+    document.getElementById('titleModal').classList.add('active');
+  }
+
+  renderTitleModalList() {
+    const summaryEl = document.getElementById('titleSummary');
+    const listEl = document.getElementById('titleList');
+    if (!summaryEl || !listEl) return;
+
+    const activeDef = TITLE_DEFINITIONS.find(t => t.id === this.activeTitle) || TITLE_DEFINITIONS[0];
+    const unlockedCount = this.unlockedTitles.length;
+
+    summaryEl.innerHTML = `
+      <div class="summary-stat-group">
+        <div class="summary-stat-item">현재 장착 칭호: <b class="gold">${activeDef.icon} ${activeDef.name}</b></div>
+        <div class="summary-stat-item">적용 중인 버프: <b class="purple">${activeDef.buffDesc}</b></div>
+        <div class="summary-stat-item">칭호 수집률: <b class="gold">${unlockedCount} / ${TITLE_DEFINITIONS.length}개</b></div>
+      </div>
+    `;
+
+    listEl.innerHTML = '';
+    TITLE_DEFINITIONS.forEach(t => {
+      const isUnlocked = this.unlockedTitles.includes(t.id);
+      const isEquipped = this.activeTitle === t.id;
+      const progressStr = t.progressText ? t.progressText(this) : '';
+
+      let statusTag = '';
+      if (isEquipped) {
+        statusTag = `<span class="title-status-tag equipped">👑 장착 중</span>`;
+      } else if (isUnlocked) {
+        statusTag = `<span class="title-status-tag unlocked">✨ 달성 완료</span>`;
+      } else {
+        statusTag = `<span class="title-status-tag locked">🔒 미달성</span>`;
+      }
+
+      const card = document.createElement('div');
+      card.className = `title-card ${isEquipped ? 'equipped' : (isUnlocked ? 'unlocked' : 'locked')}`;
+      card.innerHTML = `
+        <div class="title-icon">${t.icon}</div>
+        <div class="title-info">
+          <div class="title-header-row">
+            <span class="title-name">${t.name}</span>
+            ${statusTag}
+          </div>
+          <div class="title-desc">${t.desc}</div>
+          <div class="title-buff">⚡ 버프 효과: ${t.buffDesc}</div>
+          ${!isUnlocked && progressStr ? `<div class="title-progress">진행도: ${progressStr}</div>` : ''}
+        </div>
+        <button class="btn-title-action ${isEquipped ? 'equipped' : (isUnlocked ? 'equip' : 'locked')}" data-id="${t.id}" ${!isUnlocked || isEquipped ? 'disabled' : ''}>
+          ${isEquipped ? '장착 중' : (isUnlocked ? '장착하기 ✨' : '잠김 🔒')}
+        </button>
+      `;
+
+      listEl.appendChild(card);
+      if (isUnlocked && !isEquipped) {
+        card.querySelector('.btn-title-action')?.addEventListener('click', () => {
+          this.equipTitle(t.id);
+        });
+      }
+    });
+  }
+
+  equipTitle(titleId) {
+    if (!this.unlockedTitles.includes(titleId)) return;
+    this.activeTitle = titleId;
+    const t = TITLE_DEFINITIONS.find(item => item.id === titleId);
+
+    soundManager.playWinChime('RARE');
+    this.showToast(`👑 칭호 [${t.name}] 장착 완료! (${t.buffDesc})`);
+    this.setCharacterSpeech(`새로운 칭호 [${t.name}]을 장착했어! 기운이 솟아난다! ✨`);
+
+    this.updateActiveTitleUI();
+    this.updateEngineParams();
+    this.renderAll();
+    this.renderTitleModalList();
+    this.saveGame();
+  }
+
   getCurrentPlushiePrice(plushie) {
     const template = PLUSHIE_DATABASE[plushie.id] || PLUSHIE_DATABASE.potato;
     const rate = this.marketRates[plushie.id] || 1.0;
     const shinyMult = plushie.isShiny ? 1.5 : 1.0;
-    return Math.round(template.basePrice * rate * shinyMult);
+
+    let titleBonus = 1.0;
+    if (plushie.id === 'goldbar') {
+      titleBonus += this.getTitleBuff('goldbar_bonus');
+    } else if (['potato', 'corn', 'apple'].includes(plushie.id)) {
+      titleBonus += this.getTitleBuff('farm_bonus');
+    }
+    titleBonus += this.getTitleBuff('all_sell_bonus');
+
+    return Math.round(template.basePrice * rate * shinyMult * titleBonus);
   }
 
   updateEngineParams() {
     this.engine.setMachine(CLAW_MACHINES[this.currentMachineIndex]);
+    const titleGrip = this.getTitleBuff('grip_bonus');
+    const titleShiny = this.getTitleBuff('shiny_chance');
     this.engine.setUpgrades({
       gripPower: this.upgrades.gripPower,
       moveSpeed: this.upgrades.moveSpeed,
       luckCharm: this.upgrades.luckCharm,
-      magnetSkillUnlocked: this.upgrades.magnetSkill
+      magnetSkillUnlocked: this.upgrades.magnetSkill,
+      titleGripBonus: titleGrip,
+      titleShinyBonus: titleShiny
     });
   }
 
@@ -1520,6 +1919,12 @@ class JeongseonPlushGame {
       if (e.code === 'KeyB') {
         this.openBagModal();
       }
+      if (e.code === 'KeyH') {
+        this.openRealEstateModal();
+      }
+      if (e.code === 'KeyT') {
+        this.openTitleModal();
+      }
       if (e.code === 'KeyU') {
         this.openUpgradeModal();
       }
@@ -1541,6 +1946,9 @@ class JeongseonPlushGame {
     document.getElementById('btnDrop')?.addEventListener('click', () => this.handleSpacebar());
     document.getElementById('btnMagnet')?.addEventListener('click', () => this.engine.activateMagneticPulse());
     document.getElementById('btnOpenBag')?.addEventListener('click', () => this.openBagModal());
+    document.getElementById('btnOpenRealEstate')?.addEventListener('click', () => this.openRealEstateModal());
+    document.getElementById('btnOpenTitles')?.addEventListener('click', () => this.openTitleModal());
+    document.getElementById('activeTitleDisplay')?.addEventListener('click', () => this.openTitleModal());
     document.getElementById('btnOpenUpgrade')?.addEventListener('click', () => this.openUpgradeModal());
     document.getElementById('btnOpenCatalog')?.addEventListener('click', () => this.openCatalogModal());
     document.getElementById('btnSoundToggle')?.addEventListener('click', () => this.toggleSound());
@@ -1598,6 +2006,8 @@ class JeongseonPlushGame {
     }
 
     const machine = CLAW_MACHINES[this.currentMachineIndex];
+    const discount = this.getTitleBuff('play_discount');
+    const finalCost = Math.round(machine.cost * (1 - discount));
 
     if (this.bag.length >= this.bagCapacity) {
       soundManager.playMiss();
@@ -1606,21 +2016,21 @@ class JeongseonPlushGame {
       return;
     }
 
-    if (this.money < machine.cost) {
+    if (this.money < finalCost) {
       soundManager.playMiss();
       this.setCharacterSpeech(this.quotes.broke);
-      this.showToast(`💰 코인이 부족합니다! (${machine.name}: ₩${machine.cost.toLocaleString()} 필요)`);
+      this.showToast(`💰 코인이 부족합니다! (${machine.name}: ₩${finalCost.toLocaleString()} 필요)`);
       return;
     }
 
-    this.money -= machine.cost;
+    this.money -= finalCost;
     this.totalPlays++;
     soundManager.playCoinInsert();
     this.engine.insertCoin();
 
     const quote = this.quotes.coin[Math.floor(Math.random() * this.quotes.coin.length)];
     this.setCharacterSpeech(quote);
-    this.showToast(`🪙 코인 투입 완료! (-₩${machine.cost.toLocaleString()}) 조작을 시작합니다.`);
+    this.showToast(`🪙 코인 투입 완료! (-₩${finalCost.toLocaleString()}${discount > 0 ? ' [10% 할인!]' : ''}) 조작을 시작합니다.`);
 
     this.renderHUD();
     this.saveGame();
@@ -1636,6 +2046,9 @@ class JeongseonPlushGame {
 
   handleCatch(plushie) {
     this.totalCatches++;
+    this.itemCatchStats[plushie.id] = (this.itemCatchStats[plushie.id] || 0) + 1;
+    this.maxBagEver = Math.max(this.maxBagEver, this.bag.length + 1);
+
     this.bag.push({
       ...plushie,
       catchTime: Date.now()
@@ -1651,6 +2064,7 @@ class JeongseonPlushGame {
     this.setCharacterSpeech(`🎉 ${plushie.name} 획득! ${quote}`);
     this.showToast(`✨ [${RARITY[plushie.rarity].name}] ${plushie.name} 획득! (현재 시세: ₩${currentVal.toLocaleString()})`);
 
+    this.checkTitleUnlocks(true);
     this.renderHUD();
     this.saveGame();
   }
@@ -1693,6 +2107,10 @@ class JeongseonPlushGame {
     const earned = this.getCurrentPlushiePrice(p);
     const rate = this.marketRates[p.id] || 1.0;
 
+    if (rate >= 1.5) {
+      this.peakSellCount = (this.peakSellCount || 0) + 1;
+    }
+
     this.money += earned;
     this.careerEarnings += earned;
     this.bag.splice(index, 1);
@@ -1708,6 +2126,7 @@ class JeongseonPlushGame {
       this.setCharacterSpeech(quote);
     }
 
+    this.checkTitleUnlocks(true);
     this.renderAll();
     this.renderBagModalList();
     this.saveGame();
@@ -1720,9 +2139,14 @@ class JeongseonPlushGame {
     }
 
     let totalEarned = 0;
-    const bulkBonusRate = this.bag.length >= 5 ? 1.15 : 1.0;
+    const burstBonus = this.getTitleBuff('bulk_sell_bonus');
+    const bulkBonusRate = this.bag.length >= 5 ? (burstBonus > 0 ? 1.25 : 1.15) : 1.0;
 
     for (const p of this.bag) {
+      const rate = this.marketRates[p.id] || 1.0;
+      if (rate >= 1.5) {
+        this.peakSellCount = (this.peakSellCount || 0) + 1;
+      }
       totalEarned += this.getCurrentPlushiePrice(p);
     }
     const finalEarned = Math.round(totalEarned * bulkBonusRate);
@@ -1733,10 +2157,12 @@ class JeongseonPlushGame {
     this.bag = [];
 
     soundManager.playChaChing();
-    this.showToast(`💰 인형 ${count}개 일괄 판매 완료! +₩${finalEarned.toLocaleString()} ${bulkBonusRate > 1.0 ? '(대량 보너스 +15%!)' : ''}`);
+    const bonusPercent = Math.round((bulkBonusRate - 1.0) * 100);
+    this.showToast(`💰 인형 ${count}개 일괄 판매 완료! +₩${finalEarned.toLocaleString()} ${bonusPercent > 0 ? `(대량 보너스 +${bonusPercent}%!)` : ''}`);
 
     this.setCharacterSpeech(`대박! 인형 ${count}개를 장터 시세로 팔아서 ₩${finalEarned.toLocaleString()}을 벌었어! 🥳💸`);
 
+    this.checkTitleUnlocks(true);
     this.renderAll();
     this.renderBagModalList();
     this.saveGame();
@@ -1819,10 +2245,18 @@ class JeongseonPlushGame {
     document.getElementById('careerEarningsDisplay').textContent = `₩${this.careerEarnings.toLocaleString()}`;
     document.getElementById('bagCountDisplay').textContent = `${this.bag.length} / ${this.bagCapacity}`;
 
+    const passiveEl = document.getElementById('passiveIncomeDisplay');
+    if (passiveEl) {
+      const rent = this.getTotalPassiveIncomePerSec();
+      passiveEl.textContent = `+₩${rent.toLocaleString()}/초`;
+    }
+
     const magnetBtn = document.getElementById('btnMagnet');
     if (magnetBtn) {
       magnetBtn.style.display = this.upgrades.magnetSkill ? 'inline-flex' : 'none';
     }
+
+    this.updateActiveTitleUI();
   }
 
   renderMachineTabs() {
@@ -2141,7 +2575,13 @@ class JeongseonPlushGame {
         totalCatches: this.totalCatches,
         bag: this.bag.map(p => ({ id: p.id, isShiny: p.isShiny, price: p.price })),
         upgrades: this.upgrades,
-        currentMachineIndex: this.currentMachineIndex
+        currentMachineIndex: this.currentMachineIndex,
+        properties: this.properties,
+        itemCatchStats: this.itemCatchStats,
+        peakSellCount: this.peakSellCount,
+        unlockedTitles: this.unlockedTitles,
+        activeTitle: this.activeTitle,
+        maxBagEver: this.maxBagEver
       };
       localStorage.setItem('jeongseon_plush_save', JSON.stringify(data));
     } catch (e) {
@@ -2160,6 +2600,25 @@ class JeongseonPlushGame {
       if (typeof data.totalCatches === 'number') this.totalCatches = data.totalCatches;
       if (data.upgrades) this.upgrades = { ...this.upgrades, ...data.upgrades };
       this.bagCapacity = this.bagCapacities[this.upgrades.bagLevel - 1] || 6;
+
+      if (data.properties && typeof data.properties === 'object') {
+        this.properties = data.properties;
+      }
+      if (data.itemCatchStats && typeof data.itemCatchStats === 'object') {
+        this.itemCatchStats = data.itemCatchStats;
+      }
+      if (typeof data.peakSellCount === 'number') {
+        this.peakSellCount = data.peakSellCount;
+      }
+      if (Array.isArray(data.unlockedTitles)) {
+        this.unlockedTitles = data.unlockedTitles;
+      }
+      if (typeof data.activeTitle === 'string') {
+        this.activeTitle = data.activeTitle;
+      }
+      if (typeof data.maxBagEver === 'number') {
+        this.maxBagEver = data.maxBagEver;
+      }
 
       if (Array.isArray(data.bag)) {
         this.bag = data.bag.map(item => {
@@ -2184,3 +2643,4 @@ if (document.readyState === 'loading') {
 } else {
   window.game = new JeongseonPlushGame();
 }
+
